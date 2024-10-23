@@ -5,16 +5,42 @@ const Listing = require('../models/listing');
 
 router.get('/', async (req, res) => {
     try {
-        const listings = await Listing.find();// Fetch all listings
-        console.log(listings);// Log the listings to the console
-        res.render("Listings/index.ejs");// Send a message back to the client
+      const populatedListings = await Listing.find({}).populate('owner');
+      console.log('Populated Listings:', populatedListings);
+      res.render('listings/index.ejs', {
+        listings: populatedListings,
+      });
     } catch (error) {
-        console.error(error);// Log any errors
+      console.log(error);
+      res.redirect('/');
     }
 });
 
 router.get('/new', (req, res) => {
     res.render('listings/new.ejs');
 });
+
+router.post('/', async (req, res) => {
+    req.body.owner = req.session.user._id;
+    await Listing.create(req.body);
+    res.redirect('/listings');
+});
+//show route (READ ONE)
+router.get('/:listingId', async (req, res) => {
+    try {
+      const populatedListings = await Listing.findById(
+        req.params.listingId
+      ).populate('owner');
+  
+      res.render('listings/show.ejs', {
+        listing: populatedListings,
+      });
+    } catch (error) {
+      console.log(error);
+      res.redirect('/');
+    }
+  });
+
+
 
 module.exports = router;
