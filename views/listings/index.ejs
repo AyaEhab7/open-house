@@ -13,11 +13,10 @@
     <a href="/listings/new">Add a New Listing</a>
     </div>
     <div class="card-container">
-    <ul>
       <% listings.forEach((listing) => { %>
-       <h4>
-        A listing in <%= listing.city %> owned by <%= listing.owner.username %>.
-      </h4>
+       <h4> A listing in <%= listing.city %> </h4>
+        <p>Owned by <%= listing.owner.username %></p>
+  
         <a href="/listings/<%= listing._id %>">View more details.</a>
       <% }) %>
   </div>
