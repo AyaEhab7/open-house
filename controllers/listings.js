@@ -25,12 +25,12 @@ router.post('/', async (req, res) => {
     await Listing.create(req.body);
     res.redirect('/listings');
 });
+
 //show route (READ ONE)
 router.get('/:listingId', async (req, res) => {
     try {
       const populatedListings = await Listing.findById(
-        req.params.listingId
-      ).populate('owner');
+        req.params.listingId).populate('owner');
   
       res.render('listings/show.ejs', {
         listing: populatedListings,
@@ -41,6 +41,21 @@ router.get('/:listingId', async (req, res) => {
     }
   });
 
+//DELETE
+router.delete('/:listingId', async (req, res) => {
+    try {
+      const listing = await Listing.findById(req.params.listingId);
+      if (listing.owner.equals(req.session.user._id)) {
+        await listing.deleteOne();
+        res.redirect('/listings');
+      } else {
+        res.send("You don't have permission to do that.");
+      }
+    } catch (error) {
+      console.error(error);
+      res.redirect('/');
+    }
+  });
 
 
 module.exports = router;
